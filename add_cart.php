@@ -35,6 +35,7 @@ foreach($add_these as $product_id => $quantity)
     }
 }
 
+
 $shop_cart->update_cart($shop_cart_array);
 
 ?>
