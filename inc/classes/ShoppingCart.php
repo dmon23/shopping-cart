@@ -3,57 +3,63 @@ declare(strict_types = 1);
 
 session_start();
 
-class Cart {
-    public $cart = [];
-    public $cart_total = [];
 
-    function __construct(){
-        if(isset($_SESSION['shopping_cart']))
+class ShoppingCart {
+    public $cart;
+    public $cartTotal;
+
+    public function __construct(){
+        if(isset($_SESSION['shopping_cart']['items']))
         {
-            $this->cart = $_SESSION['shopping_cart'];
+            $this->cart = unserialize($_SESSION['shopping_cart']['items']);
+            $this->cartTotal = $_SESSION['shopping_cart']['total'];
         }
-        $this->update_cart_variables();
+        else {
+            $this->cart = [];
+            $this->cartTotal = 0;
+        }
+
+    }
+
+    public function addCartItem($item){
+
+        #check if item already exist in the cart
+        $product_id = $item->getProductID();
+
+        if(isset($this->cart[$product_id])){ #exist
+            #get current quantity
+            $current_quant = $this->cart[$product_id]->getQuantity();
+
+            $item_quant = $item->getQuantity();
+
+            #new item quantity
+            $new_Quant = $current_quant + $item_quant;
+
+            $this->cart[$product_id]->updateQuantity($new_Quant); #update quant
+        } else { #no
+            $this->cart[$product_id] = $item; #add item
+        }
+        
+        $this->updateSession();
+    }
+
+    public function updateCartItem($product_id, $quantity){
+        $this->cart[$product_id]->updateQuantity($quantity); #update quant
+        $this->updateSession();
+    }
+
+    public function removeCartItem($product_id){
+        unset($this->cart[$product_id]);
+        $this->updateSession();
+    }
+
+    private function updateSession(){
+        var_dump($this->cart);
+        $_SESSION['shopping_cart']['items'] = serialize($this->cart);
+        $_SESSION['shopping_cart']['total'] = $this->cartTotal;
     }
     
-    public function get_cart() 
-    {
-      return $this->cart;
-    }
 
-    public function update_cart($new_cart) 
-    {
-        $this->cart = $new_cart;
-        $_SESSION['shopping_cart'] = $this->cart;
-        $this->update_cart_variables();
-    }
-
-    private function update_cart_variables()
-    {
-        $_SESSION['shopping_cart'] = $this->cart;
-        $this->update_cart_total();
-        return;
-    }
-
-    public function remove_cart($product_id) 
-    {
-      unset($this->cart[$product_id]);
-      $this->update_cart_variables();
-    }
-
-    public function get_cart_total()
-    {
-        return $this->cart_total;
-    }
-
-    private function update_cart_total()
-    {
-        $temp_total = 0;
-        foreach($this->cart as $item => $item_details)
-        {
-            $temp_total+= $item_details['price'] * $item_details['quantity'];
-        }
-        $this->cart_total = number_format($temp_total, 2);
-    }
   }
 
 ?>

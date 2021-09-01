@@ -1,0 +1,28 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+body{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: lightgray;
+}
+
+.wrapper
+{
+  width: 80%;
+  background-color: linen;
+  padding: 25px 30px;
+}
+
+.product-item{
+  display: flex;
+  justify-content: space-around;
+  text-align: left;
+}
+
