@@ -7,16 +7,19 @@ session_start();
 class ShoppingCart {
     public $cart;
     public $cartTotal;
+    public $cartItemCount;
 
     public function __construct(){
         if(isset($_SESSION['shopping_cart']['items']))
         {
             $this->cart = unserialize($_SESSION['shopping_cart']['items']);
             $this->cartTotal = $_SESSION['shopping_cart']['total'];
+            $this->cartItemCount = $_SESSION['shopping_cart']['item_count'];
         }
         else {
             $this->cart = [];
             $this->cartTotal = 0;
+            $this->cartItemCount = 0;
         }
 
     }
@@ -40,6 +43,7 @@ class ShoppingCart {
             $this->cart[$product_id] = $item; #add item
         }
         
+        $this->cartItemCount++;
         $this->updateSession();
     }
 
@@ -50,13 +54,23 @@ class ShoppingCart {
 
     public function removeCartItem($product_id){
         unset($this->cart[$product_id]);
+        $this->cartItemCount--;
         $this->updateSession();
     }
 
     private function updateSession(){
-        var_dump($this->cart);
-        $_SESSION['shopping_cart']['items'] = serialize($this->cart);
-        $_SESSION['shopping_cart']['total'] = $this->cartTotal;
+        if(count($this->cart) > 0)
+        {
+            $_SESSION['shopping_cart']['items'] = serialize($this->cart);
+            $_SESSION['shopping_cart']['total'] = $this->cartTotal;
+            $_SESSION['shopping_cart']['item_count'] = $this->cartItemCount;
+        } else {
+            unset($_SESSION['shopping_cart']);
+        }
+    }
+
+    public function getCartItemCount(){
+        return $this->cartItemCount;
     }
     
 

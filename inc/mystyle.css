@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
   text-decoration: none;
+  font-family: 'Roboto', sans-serif;
 }
 
 body{
@@ -20,9 +21,34 @@ body{
   padding: 25px 30px;
 }
 
+.product-wrapper{
+  width: 300px;
+  margin: 10px;
+  background-color:orchid;
+  text-align: center;
+}
+
 .product-item{
-  display: flex;
-  justify-content: space-around;
-  text-align: left;
+  /* border: 1px solid grey; */
+  padding: 15px 20px;
+  background-color: white;
+
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.product-item:hover{
+  transform: translate(5px, -5px);
+  transition: 0.5s;
+
+  box-shadow: none;
+}
+
+#hidden-cart-text{
+  opacity: 0;
+}
+
+.openBtn:hover #hidden-cart-text{
+  opacity: 1;
+  transition: 2s;
 }
 

@@ -15,44 +15,53 @@ require "autoloader.php";
 <html lang='en'>
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="./inc/mystyle.css">
-
-   <!-- Bootstrap CSS -->
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-   <script src="https://kit.fontawesome.com/0cd2b63422.js" crossorigin="anonymous"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./inc/mystyle.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+        
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://kit.fontawesome.com/0cd2b63422.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
     <div class='wrapper'>
+        <div style='display:flex; justify-content:flex-end;'>
+            <button type="button" class="btn btn-info openBtn">
+                <span><i class="fas fa-shopping-cart"></i><span id='hidden-cart-text'> Show Cart</span></span>
+            </button>
+        </div>
+
         <section class="form product-list">
             <h3>PRODUCTS</h3>
 
             <form id='product-form'>
+                <div id='product-content' style='display:flex; flex-wrap:wrap; justify-content: center; margin-bottom: 15px;'>
                 <?php
-                var_dump($_SESSION);
+                // var_dump($_SESSION);
                 foreach($PRODUCTS as $productId => $productInfo)
                 {   
-                    echo"<div class='product-item'>";
-                        echo"<div>".$productInfo['name']."</div>";
-                        echo"<div>".$productInfo['price']."</div>";
-                        echo"<div>";
-                            echo"<input type='number' name='".$productInfo['name']."' min=0>";
+                    echo"<div class='product-wrapper'>";
+                        echo"<div class='product-item'>";
+                            echo"<h4>".$productInfo['name']."</h4>";
+                            echo"<h5>$".$productInfo['price']."</h5>";
+                            echo"<div>";
+                                echo"<input type='number' name='".$productInfo['name']."' min=0>";
+                            echo"</div>";
                         echo"</div>";
                     echo"</div>";
                 }
                 ?>
+                </div>
                 <div class='button'>
                     <input id='submit-form-btn' class='btn btn-primary' type="submit" value="Submit">
                 </div>
             </form>
 
         </section>
-
-        <button type="button" class="btn btn-info openBtn">
-            Show Cart
-        </button>
 
         <!-- Modal -->
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -68,7 +77,7 @@ require "autoloader.php";
                 ...
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Checkout</button>
+                <button type="button" id='checkoutButton' class="btn btn-primary">Checkout</button>
                 <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
             </div>
             </div>
@@ -106,7 +115,7 @@ require "autoloader.php";
             $(this).val(minVal);
         } else if(inputVal === initialVal){
             console.log("SAME!!"); 
-            exhit;           
+            exit;           
         }
         
         let productID = $(this).attr('product-id');
@@ -139,8 +148,14 @@ require "autoloader.php";
                 {
                     productID: productID
                 }, 
-                function(result){
+                function(data){
+                    let parsedData = JSON.parse(data);
+                    let cartItemCount = parsedData['cart_products'];
                     $("#product-row-"+productID).remove();
+
+                    if(cartItemCount < 1){
+                        $("#exampleModalCenter .modal-body").html("Cart is empty brotha");
+                    }
                 });
             }
         });
