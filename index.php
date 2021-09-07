@@ -6,8 +6,6 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once "./inc/constants.php";
-// require_once "./inc/classes/CartItem.php";
-
 require "autoloader.php";
 
 ?>
@@ -36,7 +34,7 @@ require "autoloader.php";
         </div>
 
         <section class="form product-list">
-            <h3>PRODUCTS</h3>
+            <h3 class='content-header'>PRODUCTS</h3>
 
             <form id='product-form'>
                 <div id='product-content' style='display:flex; flex-wrap:wrap; justify-content: center; margin-bottom: 15px;'>
@@ -46,8 +44,8 @@ require "autoloader.php";
                 {   
                     echo"<div class='product-wrapper'>";
                         echo"<div class='product-item'>";
-                            echo"<h4>".$productInfo['name']."</h4>";
-                            echo"<h5>$".$productInfo['price']."</h5>";
+                            echo"<h4 class='product-name'>".$productInfo['name']."</h4>";
+                            echo"<h5 class='product-price'>$".$productInfo['price']."</h5>";
                             echo"<div>";
                                 echo"<input type='number' name='".$productInfo['name']."' min=0>";
                             echo"</div>";
@@ -57,7 +55,7 @@ require "autoloader.php";
                 ?>
                 </div>
                 <div class='button'>
-                    <input id='submit-form-btn' class='btn btn-primary' type="submit" value="Submit">
+                    <input id='submit-form-btn' class='btn btn-primary' value="Submit">
                 </div>
             </form>
 
@@ -78,7 +76,6 @@ require "autoloader.php";
             </div>
             <div class="modal-footer">
                 <button type="button" id='checkoutButton' class="btn btn-primary">Checkout</button>
-                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
             </div>
             </div>
         </div>
@@ -93,75 +90,6 @@ require "autoloader.php";
     <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-    <script>
-    $('#submit-form-btn').on('click',function(){ //reset form after submitting
-        document.getElementById('product-form').reset();
-    });
-
-    $('.openBtn').on('click',function(){
-        $('.modal-body').load('cartData.php',function(){
-            $('#exampleModalCenter').modal({show:true});
-        });
-    });
-
-
-    $(document.body).on('focusout', 'input.cart-item-updatequantity', function(){
-        let inputVal = $(this).val();
-        let minVal = $(this).prop('min');
-        let initialVal = $(this).attr('initial-value');
-
-        if(inputVal < minVal){
-            $(this).val(minVal);
-        } else if(inputVal === initialVal){
-            console.log("SAME!!"); 
-            exit;           
-        }
-        
-        let productID = $(this).attr('product-id');
-        //post to update cart + update cart total
-        $.post("update_cart_item_quantity.php", 
-        {
-            productID: productID,
-            quantity: $(this).val()
-        }, 
-        function(result){
-            // $("span").html(result);
-        });
-    });
-
-    $(document.body).on('click', '.removeCartProduct', function(){
-        let productID = $(this).attr('product-id');
-        
-        Swal.fire({
-        title: 'Remove Product?',
-        text: 'Are you sure you want to remove the following product from the cart?',
-        icon: 'warning',
-        confirmButtonText: "YES",
-        showCancelButton: true,
-        cancelButtonText: "CANCEL"
-        }).then(function(result)
-        {
-            if(result.isConfirmed)
-            {
-                $.post("deleteCartItem.php", 
-                {
-                    productID: productID
-                }, 
-                function(data){
-                    let parsedData = JSON.parse(data);
-                    let cartItemCount = parsedData['cart_products'];
-                    $("#product-row-"+productID).remove();
-
-                    if(cartItemCount < 1){
-                        $("#exampleModalCenter .modal-body").html("Cart is empty brotha");
-                    }
-                });
-            }
-        });
-    });
-    </script>
-
   </body>
 </body>
 
